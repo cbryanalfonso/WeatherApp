@@ -12,10 +12,10 @@ export default function Home({ navigation }) {
     const [ciudad, setCiudad] = useState('Mexico City')
     const [filtrosCategorias, setFiltrosCategorias] = useState(false)
     const [woeid, setWoeid] = useState('')
-    const [tiempo, setTiempo] = useState('')
+    const [tiempo, setTiempo] = useState([])
     const [tiempoCiudad, setTiempoCiudad] = useState('Showers')
     const [fechaCiudad, setFechaCiudad] = useState('Today')
-    const [temperatura, setTemperatura] = useState('19.1')
+    const [temperatura, setTemperatura] = useState(19.1)
     ///search/?lattlong=19.7233516,-99.8134809
 
     //useEffect(() => {
@@ -73,6 +73,25 @@ export default function Home({ navigation }) {
                 </View>
             )
         })
+    }
+    function daysWeather() {
+        /* return tiempo.map(function (news, i) {
+             return (
+                 <View key={i} style={{ flex: 1, }}>
+                     <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                         <View style={{ alignItems: "center" }}>
+                             <Text>{news.consolidated_weather[i].applicable_date}</Text>
+                             <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                             <View style={{ flexDirection: "row", marginTop: 20, }}>
+                                 <Text style={{ color: 'white', marginRight: 40 }}> 16°C</Text>
+                                 <Text style={{ color: 'white', opacity: 0.5 }}> 11°C</Text>
+ 
+                             </View>
+                         </View>
+                     </TouchableOpacity>
+                 </View>
+             )
+         })*/
     }
 
     return (
@@ -136,7 +155,7 @@ export default function Home({ navigation }) {
                     <View style={{ alignItems: "center", flex: 1, paddingTop: 40, }}>
                         <Image source={require('../utils/Shower.png')} style={{ width: 250, height: 250, opacity: 1, }} />
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 100, marginTop: 30 }}>
-                            {temperatura} °C
+                            {temperatura.toFixed(1)} °C
                         </Text>
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 40, marginTop: 30 }}>
                             {tiempoCiudad}
@@ -144,7 +163,7 @@ export default function Home({ navigation }) {
                         <Text style={{ color: 'white', fontSize: 25, fontWeight: 'bold', marginTop: 20 }}>
                             {fechaCiudad}
                         </Text>
-                        <View style={{flexDirection:'row', justifyContent: "center", alignItems: "flex-end", }}>
+                        <View style={{ flexDirection: 'row', justifyContent: "center", alignItems: "flex-end", }}>
                             <Icon name="map-marker" type="material-community" color="white" ></Icon>
                             <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', marginTop: 20, marginLeft: 10 }}>
                                 {ciudad}
@@ -152,53 +171,80 @@ export default function Home({ navigation }) {
                         </View>
                     </View>
                     <View style={{ flex: 1, backgroundColor: '#0a3d62', marginTop: 160 }}>
-                        <View style={{flexDirection: "row", flex: 0.3}}>
-                            <View style={{flex: 1,}}>
-                                <TouchableOpacity style={{ backgroundColor:'#2c3e50', padding: 20, margin: 20}}>
-                                    <View>
+                        <View style={{ flexDirection: "row", flex: 0.3 }}>
+                            <View style={{ flex: 1, }}>
+                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                                    <View style={{ alignItems: "center" }}>
                                         <Text>Tomorrow</Text>
+                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
+                                            <Text style={{ color: 'white', marginRight: 40 }}>{(tiempo.consolidated_weather[1].max_temp).toFixed(1)}</Text>
+                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[1].min_temp.toFixed(1)}</Text>
+
+                                        </View>
                                     </View>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{flex: 1,}}>
-                                <TouchableOpacity style={{ backgroundColor:'#2c3e50', padding: 20, margin: 20}}>
-                                    <View>
-                                        <Text>Tomorrowsdf</Text>
+                            <View style={{ flex: 1, }}>
+                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Text>{tiempo.consolidated_weather[1].applicable_date}</Text>
+                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
+                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[2].max_temp.toFixed(1)}</Text>
+                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[2].min_temp.toFixed(1)}</Text>
+
+                                        </View>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={{flexDirection: "row", flex: 0.3}}>
-                            <View style={{flex: 1,}}>
-                                <TouchableOpacity style={{ backgroundColor:'#2c3e50', padding: 20, margin: 20}}>
-                                    <View>
-                                        <Text>Tomorrow</Text>
+                        <View style={{ flexDirection: "row", flex: 0.3 }}>
+                            <View style={{ flex: 1, }}>
+                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Text>{tiempo.consolidated_weather[2].applicable_date}</Text>
+                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
+                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[3].max_temp.toFixed(1)}</Text>
+                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[3].min_temp.toFixed(1)}</Text>
+
+                                        </View>
                                     </View>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{flex: 1,}}>
-                                <TouchableOpacity style={{ backgroundColor:'#2c3e50', padding: 20, margin: 20}}>
-                                    <View>
-                                        <Text>Tomorrowsdf</Text>
+                            <View style={{ flex: 1, }}>
+                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Text>{tiempo.consolidated_weather[3].applicable_date}</Text>
+                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
+                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[4].max_temp.toFixed(1)}</Text>
+                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[4].min_temp.toFixed(1)}</Text>
+
+                                        </View>
                                     </View>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={{flexDirection: "row", flex: 0.3}}>
-                            <View style={{flex: 1,}}>
-                                <TouchableOpacity style={{ backgroundColor:'#2c3e50', padding: 20, margin: 20}}>
-                                    <View>
-                                        <Text>Tomorrow</Text>
+                        <View style={{ flexDirection: "row", flex: 0.3 }}>
+                            <View style={{ flex: 1, }}>
+                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Text>{tiempo.consolidated_weather[4].applicable_date}</Text>
+                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
+                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[5].max_temp.toFixed(1)}</Text>
+                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[5].min_temp.toFixed(1)}</Text>
+
+                                        </View>
                                     </View>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{flex: 1,}}>
-                                <TouchableOpacity style={{ backgroundColor:'#2c3e50', padding: 20, margin: 20}}>
-                                    <View>
-                                        <Text>Tomorrowsdf</Text>
-                                    </View>
-                                </TouchableOpacity>
+                            <View style={{ flex: 1, }}>
+
                             </View>
+
                         </View>
                     </View>
                 </ScrollView>
