@@ -4,8 +4,8 @@ import { Icon } from "react-native-elements";
 import Geolocation from '@react-native-community/geolocation'
 
 export default function Home({ navigation }) {
-    const [Imagen, setImagen] = useState('')
-    const [URL, setURL] = useState('https://www.metaweather.com/api/location/116545')
+    const [imagenClima, setImagenClima] = useState('../utils/Snow.png')
+    const [URL, setURL] = useState()
     const [longitude, setLongitude] = useState('')
     const [latitude, setLatitude] = useState('')
     const [places, setPlaces] = useState([])
@@ -13,8 +13,8 @@ export default function Home({ navigation }) {
     const [filtrosCategorias, setFiltrosCategorias] = useState(false)
     const [woeid, setWoeid] = useState('')
     const [tiempo, setTiempo] = useState([])
-    const [tiempoCiudad, setTiempoCiudad] = useState('Showers')
-    const [fechaCiudad, setFechaCiudad] = useState('Today')
+    const [tiempoCiudad, setTiempoCiudad] = useState('')
+    const [fechaCiudad, setFechaCiudad] = useState('')
     const [temperatura, setTemperatura] = useState(19.1)
     ///search/?lattlong=19.7233516,-99.8134809
 
@@ -27,15 +27,45 @@ export default function Home({ navigation }) {
     //}, [URL]);
 
     useEffect(() => {
+        fetch(`https://www.metaweather.com/api/location/116545`)
+            .then((value) => value.json())
+            .then((value) => {
+                console.log(value);
+                setTiempo(value)
+                setTiempoCiudad(value.consolidated_weather[0].weather_state_name)
+                setFechaCiudad(value.consolidated_weather[0].applicable_date)
+                setTemperatura(value.consolidated_weather[0].the_temp)
+
+                let imagenNueva = value.consolidated_weather[0].weather_state_name
+                imagenNueva = imagenNueva.replace(/ /g, "")
+                //var imsadfa = '../utils/'
+                // direccionImagen = '../utils/'
+                //imsadfa += imagenNueva + '.png'
+                //const imagenesPerronas = imsadfa
+                //setImagenClima(imsadfa)
+                //console.log(imagenClima)
+                //setImagenClima(value.consolidated_weather[0].weather_state_name)
+                // Lo que se puede hacer es hacer uso de un split para poder quitar los espacios en lo tiempoCiudad. :D
+                // De esta manera cambiará los iconos conforme cambie de ciudad o de dia :D
+            });
+    }, [])
+
+    useEffect(() => {
         Geolocation.getCurrentPosition(info => {
             setLatitude(info.coords.latitude)
             setLongitude(info.coords.longitude)
         })
-    })
+        fetch(`https://www.metaweather.com/api/location/116545`)
+            .then((value) => value.json())
+            .then((value) => {
+                setTiempo(value)
+            });
+
+    }, [tiempo])
 
     function locationWeather() {
         //setURL('https://www.metaweather.com/api/location/search/?lattlong=${latitude},${longitude}')
-        console.log('dentro');
+        // console.log('dentro');
         fetch(`https://www.metaweather.com/api/location/search/?lattlong=${latitude},${longitude}`)
             .then((value) => value.json())
             .then((value) => {
@@ -62,9 +92,21 @@ export default function Home({ navigation }) {
                                     setTiempoCiudad(value.consolidated_weather[0].weather_state_name)
                                     setFechaCiudad(value.consolidated_weather[0].applicable_date)
                                     setTemperatura(value.consolidated_weather[0].the_temp)
+                                    let imagenNueva = value.consolidated_weather[0].weather_state_name
+                                    imagenNueva = imagenNueva.split(/\s/)
+                                    //setImagenClima(imagenNueva)
+                                    // Lo que se puede hacer es hacer uso de un split para poder quitar los espacios en lo tiempoCiudad. :D
+                                    // De esta manera cambiará los iconos conforme cambie de ciudad o de dia :D
                                 });
                             setFiltrosCategorias(false)
                             setCiudad(news.title)
+                            const lista = ["Snow", "Sleet", "Hail"]
+
+                            /*
+(['Snow'],['Sleet'],['Hail'],['Thunderstorm'],['Heavy Rain'],['Light Rain'],['Showers'],['Heavy Cloud']
+                            ,['Light Cloud'],['Clear']
+                            )
+                            */
 
                         }}
                     >
@@ -153,7 +195,9 @@ export default function Home({ navigation }) {
             <View style={{ flex: 1, }}>
                 <ScrollView style={{ flex: 1, }}>
                     <View style={{ alignItems: "center", flex: 1, paddingTop: 40, }}>
-                        <Image source={require('../utils/Shower.png')} style={{ width: 250, height: 250, opacity: 1, }} />
+
+
+                        <Image source={require('../utils/Snow.png')} style={{ width: 250, height: 250, opacity: 1, }} />
                         <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 100, marginTop: 30 }}>
                             {temperatura.toFixed(1)} °C
                         </Text>
@@ -176,10 +220,8 @@ export default function Home({ navigation }) {
                                 <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
                                     <View style={{ alignItems: "center" }}>
                                         <Text>Tomorrow</Text>
-                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <Image source={require('../utils/Showers.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
                                         <View style={{ flexDirection: "row", marginTop: 20, }}>
-                                            <Text style={{ color: 'white', marginRight: 40 }}>{(tiempo.consolidated_weather[1].max_temp).toFixed(1)}</Text>
-                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[1].min_temp.toFixed(1)}</Text>
 
                                         </View>
                                     </View>
@@ -188,39 +230,9 @@ export default function Home({ navigation }) {
                             <View style={{ flex: 1, }}>
                                 <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
                                     <View style={{ alignItems: "center" }}>
-                                        <Text>{tiempo.consolidated_weather[1].applicable_date}</Text>
-                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
-                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
-                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[2].max_temp.toFixed(1)}</Text>
-                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[2].min_temp.toFixed(1)}</Text>
 
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: "row", flex: 0.3 }}>
-                            <View style={{ flex: 1, }}>
-                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
-                                    <View style={{ alignItems: "center" }}>
-                                        <Text>{tiempo.consolidated_weather[2].applicable_date}</Text>
-                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <Image source={require('../utils/Showers.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
                                         <View style={{ flexDirection: "row", marginTop: 20, }}>
-                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[3].max_temp.toFixed(1)}</Text>
-                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[3].min_temp.toFixed(1)}</Text>
-
-                                        </View>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ flex: 1, }}>
-                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
-                                    <View style={{ alignItems: "center" }}>
-                                        <Text>{tiempo.consolidated_weather[3].applicable_date}</Text>
-                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
-                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
-                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[4].max_temp.toFixed(1)}</Text>
-                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[4].min_temp.toFixed(1)}</Text>
 
                                         </View>
                                     </View>
@@ -231,11 +243,30 @@ export default function Home({ navigation }) {
                             <View style={{ flex: 1, }}>
                                 <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
                                     <View style={{ alignItems: "center" }}>
-                                        <Text>{tiempo.consolidated_weather[4].applicable_date}</Text>
-                                        <Image source={require('../utils/Shower.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <Image source={require('../utils/Showers.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
                                         <View style={{ flexDirection: "row", marginTop: 20, }}>
-                                            <Text style={{ color: 'white', marginRight: 40 }}>{tiempo.consolidated_weather[5].max_temp.toFixed(1)}</Text>
-                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo.consolidated_weather[5].min_temp.toFixed(1)}</Text>
+
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ flex: 1, }}>
+                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Image source={require('../utils/Showers.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
+
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: "row", flex: 0.3 }}>
+                            <View style={{ flex: 1, }}>
+                                <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+                                    <View style={{ alignItems: "center" }}>
+                                        <Image source={require('../utils/Showers.png')} style={{ width: 100, height: 100, opacity: 1, marginTop: 10 }} />
+                                        <View style={{ flexDirection: "row", marginTop: 20, }}>
 
                                         </View>
                                     </View>
@@ -274,3 +305,10 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end'
     },
 });
+
+/*
+ <Text style={{ color: 'white', marginRight: 40 }}>{(tiempo?.consolidated_weather[1]?.max_temp).toFixed(1)}</Text>
+                                            <Text style={{ color: 'white', opacity: 0.5 }}>{tiempo?.consolidated_weather[1]?.min_temp.toFixed(1)}</Text>
+
+
+*/
