@@ -76,6 +76,7 @@ export default function Home({ navigation }) {
     }
     function placeWeather() {
         return places.map(function (news, i) {
+           
             return (
                 <View key={i} style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <TouchableOpacity style={{

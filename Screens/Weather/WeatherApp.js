@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, FlatList, Image, ImageBackground, ProgressBarAndroidComponent, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { ActivityIndicator, Alert, FlatList, Image, ImageBackground, Modal, ProgressBarAndroidComponent, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Icon, Input } from 'react-native-elements';
 import Target from '../Componentes/Target';
 import TargetHightlights from '../Componentes/TargetHightlights';
 
-export default function WeatherApp({navigation, URLs}) {
+export default function WeatherApp({ navigation, URLs }) {
     //const [imagenClima, setImagenClima] = useState(false)
     const [URL, setURL] = useState('https://www.metaweather.com/api/location/116545')
     const [climaActual, setClimaActual] = useState([])
@@ -18,6 +18,7 @@ export default function WeatherApp({navigation, URLs}) {
     const [humildity, setHumildity] = useState(0)
     const [visibility, setVisibility] = useState(0)
     const [air, setAir] = useState(0)
+    const [filtrosCategorias, setFiltrosCategorias] = useState(false)
     let icono = "lc"
 
     const renderItem = ({ item }) => (
@@ -61,6 +62,52 @@ export default function WeatherApp({navigation, URLs}) {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#2c3e50" }}>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={filtrosCategorias}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                }}
+            >
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#2c3e50' }}>
+                    <View style={{ flex: 0.1, justifyContent: 'center', alignItems: 'flex-end', marginRight: 15 }}>
+
+                        <TouchableOpacity style={styles.btnIcono}
+                            onPress={() => setFiltrosCategorias(false)}
+                        >
+                            <Icon
+                                type="material-community"
+                                name="close"
+                                size={30}
+                                color='white'
+                            />
+                        </TouchableOpacity>
+
+                    </View>
+                    <View style={{ flex: 0.1, flexDirection: 'row' }}>
+                        <View style={{ flex: 0.7, justifyContent: "center", width: "80%", paddingHorizontal: 20, }}>
+                            <Input leftIcon={<Icon
+                                type="material-community"
+                                name="magnify"
+                                size={15}
+                                color='white'
+                            />}
+                                placeholder="search location"
+                                inputContainerStyle={{ borderWidth: 2, borderRadius: 5, justifyContent: "center", marginTop: 20, paddingHorizontal: 20 }}
+                            />
+                        </View>
+                        <View style={{ flex: 0.3, justifyContent: "center", width: "80%" }}>
+                            <TouchableOpacity style={{ backgroundColor: '#2980b9', padding: 18, borderRadius: 5, marginRight: 10 }}>
+                                <Text>Search</Text>
+                            </TouchableOpacity>
+                        </View>
+
+
+                    </View>
+
+                </SafeAreaView>
+            </Modal>
             <ScrollView style={{ flex: 1 }}>
 
                 {// Es el estilo del Header, donde estan los botones
@@ -68,7 +115,9 @@ export default function WeatherApp({navigation, URLs}) {
                 <View style={{ flex: 0.1, flexDirection: 'row', marginTop: 10 }}>
                     <View style={styles.header}>
                         <TouchableOpacity style={{ backgroundColor: "#7f8c8d", borderRadius: 20, padding: 15 }}
-                            onPress={() => navigation.navigate('Busqueda')}
+                            onPress={() => setFiltrosCategorias(true)
+                                //navigation.navigate('Busqueda')
+                            }
                         >
                             <Text>Search places</Text>
                         </TouchableOpacity>
@@ -86,9 +135,9 @@ export default function WeatherApp({navigation, URLs}) {
                 </View>
                 <View style={{ flex: 1, alignItems: 'center' }}>
                     <View style={{ flex: 0.7, alignItems: 'center' }}>
-                    {
-                        //Esto se realiza para poder tener una ventana de carga de imagen, con ayuda de activityIndicator
-                    }
+                        {
+                            //Esto se realiza para poder tener una ventana de carga de imagen, con ayuda de activityIndicator
+                        }
                         {loading ? (
                             <SafeAreaView
                                 style={{
@@ -143,7 +192,7 @@ export default function WeatherApp({navigation, URLs}) {
                         <View style={{ flex: 1, backgroundColor: '#2c3e50', margin: 20, padding: 20, }}>
                             <Text style={[styles.titulosFinal, { alignSelf: 'center' }]}>Humildity</Text>
                             <Text style={[styles.datosFinal, { alignSelf: 'center' }]}>{humildity} %</Text>
-                            <View >{/* Lo que se crea es un componente de carga, para que se vea la humedad*/ }
+                            <View >{/* Lo que se crea es un componente de carga, para que se vea la humedad*/}
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
                                     <Text> 0% </Text>
                                     <Text> 50%</Text>
