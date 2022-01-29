@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Alert, ImageBackground, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import { Icon } from "react-native-elements";
 import Geolocation from '@react-native-community/geolocation'
-
 export default function Home({ navigation }) {
     const [imagenClima, setImagenClima] = useState('../utils/Snow.png')
     const [URL, setURL] = useState()

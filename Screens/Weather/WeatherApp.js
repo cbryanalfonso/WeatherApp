@@ -20,12 +20,17 @@ export default function WeatherApp({ navigation, URLs }) {
     const [visibility, setVisibility] = useState(0)
     const [air, setAir] = useState(0)
     const [filtrosCategorias, setFiltrosCategorias] = useState(false)
-    const [dataSetSearch, setDataSetSearch] = useState([])
-    let icono = "lc"
+    const [dataSetSearch, setDataSetSearch] = useState('')
+    const [textSearch, setTextSearch] = useState('');
+    const [showCardFilter, setShowCardFilter] = useState(false)
+    const keyExtractor = (item, index) => index.toString();
 
     const renderItem = ({ item }) => (
         <Target item={item} />
     );
+    const renderBusqueda = ({ item }) => {
+        <BusquedaLugares item={item} />
+    }
 
 
     const startLoading = () => {
@@ -42,7 +47,7 @@ export default function WeatherApp({ navigation, URLs }) {
             .then((value) => value.json())
             .then((value) => {
                 //Se va dividiendo por parametros.
-                console.log(value.consolidated_weather[0]);
+                // console.log(value);
                 setWindStatus(value.consolidated_weather[0].wind_direction)
                 setWindDirection(value.consolidated_weather[0].wind_direction_compass)
                 setHumildity(value.consolidated_weather[0].humidity)
@@ -55,17 +60,27 @@ export default function WeatherApp({ navigation, URLs }) {
                 startLoading();
                 setClimaNuevo(value.consolidated_weather[0].weather_state_abbr)
             })
+
+        fetch('https://www.metaweather.com/api/api/location/search/?query=san')
+            .then((value) => value.json())
+            .then((value) => {
+                console.log(value);
+                // setDataSetSearch(value)
+                //setShowCardFilter(value.length > 0);
+            })
     }, [])
 
     const handleBusqueda = text => {
         if (text === '') {
             setDataSetSearch([])
-            console.log("No se puede");
+            //console.log("No se puede");
         } else {
             fetch(`https://www.metaweather.com/api/location/search/?query=${text}`)
                 .then((value) => value.json())
                 .then((value) => {
-                    console.log(value);
+                    //console.log(value.title);
+                    setDataSetSearch(value)
+                    setShowCardFilter(value.length > 0);
                 })
         }
     }
@@ -87,7 +102,10 @@ export default function WeatherApp({ navigation, URLs }) {
                     <View style={{ flex: 0.1, justifyContent: 'center', alignItems: 'flex-end', marginRight: 15, }}>
 
                         <TouchableOpacity style={styles.btnIcono}
-                            onPress={() => setFiltrosCategorias(false)}
+                            onPress={() => {
+                                setFiltrosCategorias(false)
+                                setShowCardFilter(false)
+                            }}
                         >
                             <Icon
                                 type="material-community"
@@ -100,12 +118,10 @@ export default function WeatherApp({ navigation, URLs }) {
                     <View style={{ flex: 0.1, flexDirection: 'row' }}>
                         <View style={{ flex: 0.7, justifyContent: "center", width: "80%", paddingHorizontal: 20, }}>
                             <Input
-                               // value={value}
                                 placeholder="search location"
                                 placeholderTextColor='#ecf0f1'
                                 style={{ color: '#ecf0f1', }}
-                                //onChangeText={value => onChangeText(value)}
-                                //onChangeText={value => this.setState({ comment: value })}
+                                onChangeText={textSearch => handleBusqueda(textSearch)}
                                 inputContainerStyle={{ borderWidth: 2, borderRadius: 5, justifyContent: "center", marginTop: 20, paddingHorizontal: 20 }}
                                 leftIcon={<Icon
                                     type="material-community"
@@ -124,9 +140,31 @@ export default function WeatherApp({ navigation, URLs }) {
 
 
                     </View>
-                    <View style={{ flex: 0.8 }}>
+                    <View style={{ flex: 0.8, backgroundColor: 'green' }}>
                         {/** lo que se coloca en esta parte es un FLATLIST PARA FILTRAR LA BUSQUEDA DE API, ESTO SE HARA EN TIEMPO REAL */}
-                        <BusquedaLugares />
+                        {showCardFilter ? (
+
+                            <View style={{ backgroundColor: 'red', zIndex: 1, }}>
+                                {
+                                    // console.log(dataSetSearch)
+                                }
+                                <FlatList
+                                    data={dataSetSearch}
+                                    //keyExtractor={(country) => country.title }
+                                    renderItem={renderBusqueda}
+                                    keyExtractor={keyExtractor}
+                                // keyExtractor={(clima) => clima.applicable_date}
+                                />
+                            </View>
+
+                        ) : (
+                            <View style={{ flex: 1, backgroundColor: 'yellow' }}>
+                                <TouchableOpacity style={{ height: "100%", backgroundColor: 'black' }}></TouchableOpacity>
+                            </View>
+                        )
+
+                        }
+
                     </View>
 
                 </SafeAreaView>
@@ -198,6 +236,8 @@ export default function WeatherApp({ navigation, URLs }) {
                 <View style={{ flex: 1, backgroundColor: '#34495e' }}>
                     <Text style={[styles.clima, { fontSize: 25, marginLeft: 10, alignSelf: 'center', paddingTop: 30 }]}>Weather</Text>
                     { /* Este flatlist es para cargar el clima de dias posteriores, solo que se tien que revisar, ya que genera un Warning con el ScrollView*/}
+                    {//console.log('Este es el clima de la ciudad', climaCiudad.applicable_date)
+                    }
                     <FlatList
                         nestedScrollEnabled
                         data={climaCiudad}
