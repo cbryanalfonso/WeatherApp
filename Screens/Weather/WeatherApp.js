@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, FlatList, Image, ImageBackground, Modal, ProgressBarAndroidComponent, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
+import BusquedaLugares from '../Componentes/BusquedaLugares';
 import Target from '../Componentes/Target';
 import TargetHightlights from '../Componentes/TargetHightlights';
 
@@ -19,6 +20,7 @@ export default function WeatherApp({ navigation, URLs }) {
     const [visibility, setVisibility] = useState(0)
     const [air, setAir] = useState(0)
     const [filtrosCategorias, setFiltrosCategorias] = useState(false)
+    const [dataSetSearch, setDataSetSearch] = useState([])
     let icono = "lc"
 
     const renderItem = ({ item }) => (
@@ -55,7 +57,18 @@ export default function WeatherApp({ navigation, URLs }) {
             })
     }, [])
 
-
+    const handleBusqueda = text => {
+        if (text === '') {
+            setDataSetSearch([])
+            console.log("No se puede");
+        } else {
+            fetch(`https://www.metaweather.com/api/location/search/?query=${text}`)
+                .then((value) => value.json())
+                .then((value) => {
+                    console.log(value);
+                })
+        }
+    }
 
 
 
@@ -70,8 +83,8 @@ export default function WeatherApp({ navigation, URLs }) {
                     Alert.alert("Modal has been closed.");
                 }}
             >
-                <SafeAreaView style={{ flex: 1, backgroundColor: '#2c3e50' }}>
-                    <View style={{ flex: 0.1, justifyContent: 'center', alignItems: 'flex-end', marginRight: 15 }}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: '#2c3e50', borderTopLeftRadius: 20, borderTopRightRadius: 20, borderWidth: 1, marginTop: 5, borderColor: '#34495e' }}>
+                    <View style={{ flex: 0.1, justifyContent: 'center', alignItems: 'flex-end', marginRight: 15, }}>
 
                         <TouchableOpacity style={styles.btnIcono}
                             onPress={() => setFiltrosCategorias(false)}
@@ -83,18 +96,24 @@ export default function WeatherApp({ navigation, URLs }) {
                                 color='white'
                             />
                         </TouchableOpacity>
-
                     </View>
                     <View style={{ flex: 0.1, flexDirection: 'row' }}>
                         <View style={{ flex: 0.7, justifyContent: "center", width: "80%", paddingHorizontal: 20, }}>
-                            <Input leftIcon={<Icon
-                                type="material-community"
-                                name="magnify"
-                                size={15}
-                                color='white'
-                            />}
+                            <Input
+                               // value={value}
                                 placeholder="search location"
+                                placeholderTextColor='#ecf0f1'
+                                style={{ color: '#ecf0f1', }}
+                                //onChangeText={value => onChangeText(value)}
+                                //onChangeText={value => this.setState({ comment: value })}
                                 inputContainerStyle={{ borderWidth: 2, borderRadius: 5, justifyContent: "center", marginTop: 20, paddingHorizontal: 20 }}
+                                leftIcon={<Icon
+                                    type="material-community"
+                                    name="magnify"
+                                    size={15}
+                                    color='white'
+                                />}
+
                             />
                         </View>
                         <View style={{ flex: 0.3, justifyContent: "center", width: "80%" }}>
@@ -104,6 +123,10 @@ export default function WeatherApp({ navigation, URLs }) {
                         </View>
 
 
+                    </View>
+                    <View style={{ flex: 0.8 }}>
+                        {/** lo que se coloca en esta parte es un FLATLIST PARA FILTRAR LA BUSQUEDA DE API, ESTO SE HARA EN TIEMPO REAL */}
+                        <BusquedaLugares />
                     </View>
 
                 </SafeAreaView>
