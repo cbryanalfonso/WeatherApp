@@ -18,7 +18,7 @@ export default function Target({ item }) {
     return (
         <View style={{ flex: 1, backgroundColor: '#34495e' }}>
             
-            <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20 }}>
+            <TouchableOpacity style={{ backgroundColor: '#2c3e50', padding: 20, margin: 20, borderRadius: 20 }}>
                 <View style={{ alignItems: "center" }}>
                     <Text>{item.applicable_date}</Text>
                     {loading ? (
